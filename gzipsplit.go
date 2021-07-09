@@ -41,6 +41,7 @@ func CloseGZ(f F) {
 
 func main() {
 	buffer := flag.Int("b", 10000, "How many lines to write to each gzip file.")
+	filePrefix := flag.String("f", "split", "filename prefix. Files will be in the format $prefix$number.gz")
 	flag.Parse()
 
 	s := bufio.NewScanner(os.Stdin)
@@ -50,7 +51,7 @@ func main() {
 		linesSlice = append(linesSlice, s.Text())
 		if len(linesSlice) >= *buffer {
 			lines := sliceToLines(linesSlice)
-			f := CreateGZ(fmt.Sprintf("split%d.gz", fileCounter))
+			f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
 			fileCounter++
 			WriteGZ(f, lines)
 			lines = ""
