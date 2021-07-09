@@ -49,13 +49,14 @@ func main() {
 	counter := 0
 	lines := ""
 	for s.Scan() {
-		lines = lines + s.Text()
+		lines = lines + "\n" + s.Text()
 		counter++
 		if counter >= *buffer {
 			f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
 			fileCounter++
 			WriteGZ(f, lines)
 			lines = ""
+			counter = 0
 			CloseGZ(f)
 		}
 	}
