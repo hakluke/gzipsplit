@@ -46,30 +46,21 @@ func main() {
 
 	s := bufio.NewScanner(os.Stdin)
 	fileCounter := 1
-	var linesSlice []string
+	counter := 0
+	lines := ""
 	for s.Scan() {
-		linesSlice = append(linesSlice, s.Text())
-		if len(linesSlice) >= *buffer {
-			lines := sliceToLines(linesSlice)
+		lines = lines + s.Text()
+		counter++
+		if counter >= *buffer {
 			f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
 			fileCounter++
 			WriteGZ(f, lines)
 			lines = ""
-			linesSlice = nil
 			CloseGZ(f)
 		}
 	}
-
-}
-
-func sliceToLines(slice []string) string {
-	var lines string
-	for c, s := range slice {
-		if c == 0 {
-			lines = s
-		} else {
-			lines = lines + fmt.Sprintf("\n%s", s)
-		}
-	}
-	return lines
+	// write the final file
+	f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
+	WriteGZ(f, lines)
+	CloseGZ(f)
 }
