@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 type F struct {
@@ -47,21 +48,28 @@ func main() {
 	s := bufio.NewScanner(os.Stdin)
 	fileCounter := 1
 	counter := 0
-	lines := ""
+	var sb strings.Builder
 	for s.Scan() {
-		lines = lines + "\n" + s.Text()
+		_, err := sb.WriteString("\n")
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, err = sb.WriteString(s.Text())
+		if err != nil {
+			log.Fatal(err)
+		}
 		counter++
 		if counter >= *buffer {
 			f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
 			fileCounter++
-			WriteGZ(f, lines)
-			lines = ""
+			WriteGZ(f, sb.String())
+			sb.Reset()
 			counter = 0
 			CloseGZ(f)
 		}
 	}
 	// write the final file
 	f := CreateGZ(fmt.Sprintf("%s%d.gz", *filePrefix, fileCounter))
-	WriteGZ(f, lines)
+	WriteGZ(f, sb.String())
 	CloseGZ(f)
 }
