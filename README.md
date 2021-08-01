@@ -1,2 +1,3 @@
 # gzipsplit
-split lines of text into multiple gzip files
+
+NOTE: This tool is deprecated, please use https://github.com/hakluke/hakgzsplit
